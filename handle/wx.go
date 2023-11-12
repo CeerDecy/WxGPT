@@ -7,10 +7,12 @@ import (
 )
 
 func Wx(ctx *gin.Context) {
-	header := ctx.GetHeader("signature")
-	log.Println("header ", header)
-	value, _ := ctx.Get("signature")
-	log.Println("body ", value)
+	signature, _ := ctx.GetQuery("signature")
+	log.Println("signature ", signature)
+	timestamp, _ := ctx.GetQuery("timestamp")
+	log.Println("timestamp ", timestamp)
+	nonce, _ := ctx.GetQuery("nonce")
+	log.Println("nonce ", nonce)
 	ctx.JSON(200, gin.H{
 		"msg":  "success",
 		"code": 200,
