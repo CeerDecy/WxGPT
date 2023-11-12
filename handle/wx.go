@@ -3,7 +3,10 @@ package handle
 import (
 	"crypto/sha1"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
+	"io"
+	"log"
 	"sort"
 
 	"github.com/gin-gonic/gin"
@@ -25,6 +28,16 @@ func Wx(ctx *gin.Context) {
 	hash.Write([]byte(fmt.Sprint(list...)))
 	encodeToString := hex.EncodeToString(hash.Sum(nil))
 	if encodeToString == signature {
+		bytes, err := io.ReadAll(ctx.Request.Body)
+		if err != nil {
+			log.Println(err)
+		}
+		data := make(map[string]any)
+		err = json.Unmarshal(bytes, &data)
+		if err != nil {
+			log.Println(err)
+		}
+		fmt.Println(data)
 		ctx.String(200, echostr)
 	} else {
 		ctx.String(200, "")

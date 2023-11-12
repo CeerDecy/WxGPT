@@ -3,6 +3,7 @@ package handle
 import (
 	"crypto/sha1"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"sort"
 	"testing"
@@ -18,4 +19,11 @@ func TestSha(t *testing.T) {
 	hash := sha1.New()
 	hash.Write([]byte(fmt.Sprint(list...)))
 	fmt.Println(hex.EncodeToString(hash.Sum(nil)))
+}
+
+func TestMap(t *testing.T) {
+	bytes := []byte(`{"msg":"success"}`)
+	data := make(map[string]any)
+	_ = json.Unmarshal(bytes, &data)
+	fmt.Println(data)
 }
