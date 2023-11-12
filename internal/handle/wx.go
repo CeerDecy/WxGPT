@@ -24,15 +24,22 @@ func Msg(ctx *gin.Context) {
 		log.Println(err)
 	}
 	fmt.Println(data)
-	response := model.TextResponse{
-		ToUserName:   data.FromUserName,
-		FromUserName: data.ToUserName,
-		CreateTime:   uint64(time.Now().Unix()),
-		MsgType:      data.MsgType,
-		Content:      "receive msg :" + data.Content,
-	}
-	log.Println(response)
-	ctx.XML(200, response)
+	//response := model.TextResponse{
+	//	ToUserName:   data.FromUserName,
+	//	FromUserName: data.ToUserName,
+	//	CreateTime:   uint64(time.Now().Unix()),
+	//	MsgType:      data.MsgType,
+	//	Content:      "receive msg :" + data.Content,
+	//}
+	ctx.Data(
+		200,
+		"application/xml",
+		[]byte(fmt.Sprintf(`<xml><ToUserName><![CDATA[%s]]></ToUserName><FromUserName><![CDATA[%s]]></FromUserName><CreateTime>%d</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[%s]]></Content></xml>`,
+			data.FromUserName,
+			data.ToUserName,
+			uint64(time.Now().Unix()),
+			"receive msg :"+data.Content)))
+	//ctx.XML(200, response)
 }
 
 func Wx(ctx *gin.Context) {
