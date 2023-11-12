@@ -34,7 +34,7 @@ func TestMap(t *testing.T) {
   <MsgDataId>323</MsgDataId>
   <Idx>56654</Idx>
 </xml>`)
-	data := &model.ReceiveMsg{}
+	data := &model.TextReceive{}
 	_ = xml.Unmarshal(bytes, data)
 	fmt.Println(data)
 }
