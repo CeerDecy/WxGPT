@@ -2,10 +2,8 @@ package handle
 
 import (
 	"encoding/xml"
-	"fmt"
 	"io"
 	"log"
-	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -24,14 +22,19 @@ func ReceiveAndReturn(ctx *gin.Context) {
 		log.Println(err)
 	}
 	log.Printf("[Unmarshal data ] : %+v", data)
+	//ctx.Data(
+	//	200,
+	//	"application/xml",
+	//	[]byte(fmt.Sprintf(`<xml><ToUserName><![CDATA[%s]]></ToUserName><FromUserName><![CDATA[%s]]></FromUserName><CreateTime>%d</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[%s]]></Content></xml>`,
+	//		data.FromUserName,
+	//		data.ToUserName,
+	//		uint64(time.Now().Unix()),
+	//"receive msg :" + data.Content)))
 	ctx.Data(
 		200,
 		"application/xml",
-		[]byte(fmt.Sprintf(`<xml><ToUserName><![CDATA[%s]]></ToUserName><FromUserName><![CDATA[%s]]></FromUserName><CreateTime>%d</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[%s]]></Content></xml>`,
-			data.FromUserName,
-			data.ToUserName,
-			uint64(time.Now().Unix()),
-			"receive msg :"+data.Content)))
+		[]byte(model.DefaultTextResp(data.FromUserName, data.ToUserName, "receive msg :"+data.Content)))
+
 }
 
 func Auth(ctx *gin.Context) {

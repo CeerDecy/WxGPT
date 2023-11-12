@@ -31,10 +31,10 @@ type TextResponse struct {
 	Content      string `xml:"Content"`
 }
 
-func DefaultTextResp(ToUserName, FromUserName, Content string) []byte {
-	return []byte(fmt.Sprintf(`<xml><ToUserName><![CDATA[%s]]></ToUserName><FromUserName><![CDATA[%s]]></FromUserName><CreateTime>%d</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[%s]]></Content></xml>`,
-		FromUserName,
+func DefaultTextResp(ToUserName, FromUserName, Content string) string {
+	return fmt.Sprintf(`<xml><ToUserName><![CDATA[%s]]></ToUserName><FromUserName><![CDATA[%s]]></FromUserName><CreateTime>%d</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[%s]]></Content></xml>`,
 		ToUserName,
+		FromUserName,
 		uint64(time.Now().Unix()),
-		Content))
+		Content)
 }
