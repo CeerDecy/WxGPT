@@ -1,5 +1,10 @@
 package model
 
+import (
+	"fmt"
+	"time"
+)
+
 type TextReceive struct {
 	ToUserName   string `xml:"ToUserName"`
 	FromUserName string `xml:"FromUserName"`
@@ -24,4 +29,12 @@ type TextResponse struct {
 	CreateTime   uint64 `xml:"CreateTime"`
 	MsgType      string `xml:"MsgType"`
 	Content      string `xml:"Content"`
+}
+
+func DefaultTextResp(ToUserName, FromUserName, Content string) []byte {
+	return []byte(fmt.Sprintf(`<xml><ToUserName><![CDATA[%s]]></ToUserName><FromUserName><![CDATA[%s]]></FromUserName><CreateTime>%d</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[%s]]></Content></xml>`,
+		FromUserName,
+		ToUserName,
+		uint64(time.Now().Unix()),
+		Content))
 }

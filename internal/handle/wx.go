@@ -2,10 +2,8 @@ package handle
 
 import (
 	"encoding/xml"
-	"fmt"
 	"io"
 	"log"
-	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -13,7 +11,7 @@ import (
 	"WxGPT/internal/tools"
 )
 
-func Msg(ctx *gin.Context) {
+func ReceiveAndReturn(ctx *gin.Context) {
 	bytes, err := io.ReadAll(ctx.Request.Body)
 	if err != nil {
 		log.Println(err)
@@ -23,26 +21,14 @@ func Msg(ctx *gin.Context) {
 	if err != nil {
 		log.Println(err)
 	}
-	fmt.Println(data)
-	//response := model.TextResponse{
-	//	ToUserName:   data.FromUserName,
-	//	FromUserName: data.ToUserName,
-	//	CreateTime:   uint64(time.Now().Unix()),
-	//	MsgType:      data.MsgType,
-	//	Content:      "receive msg :" + data.Content,
-	//}
+	log.Printf("[Unmarshal data ] : %+v", data)
 	ctx.Data(
 		200,
 		"application/xml",
-		[]byte(fmt.Sprintf(`<xml><ToUserName><![CDATA[%s]]></ToUserName><FromUserName><![CDATA[%s]]></FromUserName><CreateTime>%d</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[%s]]></Content></xml>`,
-			data.FromUserName,
-			data.ToUserName,
-			uint64(time.Now().Unix()),
-			"receive msg :"+data.Content)))
-	//ctx.XML(200, response)
+		model.DefaultTextResp(data.FromUserName, data.ToUserName, data.Content))
 }
 
-func Wx(ctx *gin.Context) {
+func Auth(ctx *gin.Context) {
 	signature, _ := ctx.GetQuery("signature")
 	timestamp, _ := ctx.GetQuery("timestamp")
 	nonce, _ := ctx.GetQuery("nonce")

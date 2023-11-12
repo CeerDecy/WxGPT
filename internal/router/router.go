@@ -8,7 +8,7 @@ import (
 
 func Engine() *gin.Engine {
 	router := gin.Default()
-	router.GET("/wx", handle.Wx)
-	router.POST("/wx", handle.Msg)
+	router.GET("/wx", handle.Auth)
+	router.POST("/wx", handle.ReceiveAndReturn)
 	return router
 }
