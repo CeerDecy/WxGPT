@@ -33,7 +33,15 @@ func ReceiveAndReturn(ctx *gin.Context) {
 	//"receive msg :" + data.Content)))
 	client := gptclient.DefaultClient()
 	response, err := client.GetResponse(data.Content)
+
 	if err != nil {
+		if err.Error() == `Post "https://proxy.geekai.co/v1/chat/completions": context deadline exceeded` {
+			ctx.Data(
+				200,
+				"application/xml",
+				[]byte(model.DefaultTextResp(data.FromUserName, data.ToUserName, "AI响应超时")))
+			return
+		}
 		ctx.Data(
 			200,
 			"application/xml",
