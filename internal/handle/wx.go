@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -12,28 +13,34 @@ import (
 	"WxGPT/internal/tools"
 )
 
+func Msg(ctx *gin.Context) {
+	bytes, err := io.ReadAll(ctx.Request.Body)
+	if err != nil {
+		log.Println(err)
+	}
+	var data model.TextReceive
+	err = xml.Unmarshal(bytes, &data)
+	if err != nil {
+		log.Println(err)
+	}
+	fmt.Println(data)
+	ctx.XML(200, model.TextResponse{
+		ToUserName:   data.FromUserName,
+		FromUserName: data.ToUserName,
+		CreateTime:   uint64(time.Now().Unix()),
+		MsgType:      "text",
+		Content:      "receive msg :" + data.Content,
+	})
+}
+
 func Wx(ctx *gin.Context) {
 	signature, _ := ctx.GetQuery("signature")
 	timestamp, _ := ctx.GetQuery("timestamp")
-	//echostr, _ := ctx.GetQuery("echostr")
 	nonce, _ := ctx.GetQuery("nonce")
-	openid, _ := ctx.GetQuery("openid")
 	token := "WxGPT"
 	if tools.Auth(signature, timestamp, nonce, token) {
-
-		bytes, err := io.ReadAll(ctx.Request.Body)
-		if err != nil {
-			log.Println(err)
-		}
-		var data model.TextReceive
-		err = xml.Unmarshal(bytes, &data)
-		if err != nil {
-			log.Println(err)
-		}
-		fmt.Println(data)
-		ctx.XML(200, model.DefaultTextResp(openid, token, "msg received : "+data.Content))
+		ctx.String(200, signature)
 	} else {
-		ctx.XML(200, model.DefaultTextResp(openid, token, "认证失败"))
+		ctx.String(200, "")
 	}
-
 }
