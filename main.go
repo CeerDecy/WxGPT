@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/sashabaranov/go-openai"
 
-	"GoGPT/router"
+	"WxGPT/router"
 )
 
 type Messages struct {
