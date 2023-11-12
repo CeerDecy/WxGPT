@@ -1,7 +1,5 @@
 package model
 
-import "time"
-
 type TextReceive struct {
 	ToUserName   string `xml:"ToUserName"`
 	FromUserName string `xml:"FromUserName"`
@@ -13,7 +11,7 @@ type TextReceive struct {
 	Idx          uint64 `xml:"Idx"`
 }
 
-// <xml>
+// TextResponse <xml>
 // <ToUserName><![CDATA[toUser]]></ToUserName>
 // <FromUserName><![CDATA[fromUser]]></FromUserName>
 // <CreateTime>12345678</CreateTime>
@@ -26,14 +24,4 @@ type TextResponse struct {
 	CreateTime   uint64 `xml:"CreateTime"`
 	MsgType      string `xml:"MsgType"`
 	Content      string `xml:"Content"`
-}
-
-func DefaultTextResp(openid string, token string, content string) *TextResponse {
-	return &TextResponse{
-		ToUserName:   openid,
-		FromUserName: token,
-		CreateTime:   uint64(time.Now().Unix()),
-		MsgType:      "text",
-		Content:      content,
-	}
 }

@@ -24,13 +24,15 @@ func Msg(ctx *gin.Context) {
 		log.Println(err)
 	}
 	fmt.Println(data)
-	ctx.XML(200, model.TextResponse{
+	response := model.TextResponse{
 		ToUserName:   data.FromUserName,
 		FromUserName: data.ToUserName,
 		CreateTime:   uint64(time.Now().Unix()),
-		MsgType:      "text",
+		MsgType:      data.MsgType,
 		Content:      "receive msg :" + data.Content,
-	})
+	}
+	log.Println(response)
+	ctx.XML(200, response)
 }
 
 func Wx(ctx *gin.Context) {
