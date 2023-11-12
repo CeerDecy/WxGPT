@@ -3,7 +3,7 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 
-	"WxGPT/handle"
+	"WxGPT/internal/handle"
 )
 
 func Engine() *gin.Engine {

@@ -1,27 +1,25 @@
 package main
 
 import (
-	"github.com/sashabaranov/go-openai"
-
-	"WxGPT/router"
+	"WxGPT/internal/router"
 )
 
-type Messages struct {
-	msg []openai.ChatCompletionMessage
-}
-
-func NewMessages() *Messages {
-	return &Messages{
-		msg: make([]openai.ChatCompletionMessage, 0),
-	}
-}
-
-func (m *Messages) AddChatMessageRoleUserMsg(content string) {
-	m.msg = append(m.msg, openai.ChatCompletionMessage{
-		Role:    openai.ChatMessageRoleUser,
-		Content: content,
-	})
-}
+//type Messages struct {
+//	msg []openai.ChatCompletionMessage
+//}
+//
+//func NewMessages() *Messages {
+//	return &Messages{
+//		msg: make([]openai.ChatCompletionMessage, 0),
+//	}
+//}
+//
+//func (m *Messages) AddChatMessageRoleUserMsg(content string) {
+//	m.msg = append(m.msg, openai.ChatCompletionMessage{
+//		Role:    openai.ChatMessageRoleUser,
+//		Content: content,
+//	})
+//}
 
 func main() {
 	engine := router.Engine()

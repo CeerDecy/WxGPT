@@ -3,10 +3,12 @@ package handle
 import (
 	"crypto/sha1"
 	"encoding/hex"
-	"encoding/json"
+	"encoding/xml"
 	"fmt"
 	"sort"
 	"testing"
+
+	"WxGPT/internal/model"
 )
 
 func TestSha(t *testing.T) {
@@ -22,8 +24,17 @@ func TestSha(t *testing.T) {
 }
 
 func TestMap(t *testing.T) {
-	bytes := []byte(`{"msg":"success"}`)
-	data := make(map[string]any)
-	_ = json.Unmarshal(bytes, &data)
+	bytes := []byte(`<xml>
+  <ToUserName>adda</ToUserName>
+  <FromUserName>rewfe</FromUserName>
+  <CreateTime>1348831860</CreateTime>
+  <MsgType>jnvdhs</MsgType>
+  <Content>adujwdn</Content>
+  <MsgId>1234567890123456</MsgId>
+  <MsgDataId>323</MsgDataId>
+  <Idx>56654</Idx>
+</xml>`)
+	data := &model.ReceiveMsg{}
+	_ = xml.Unmarshal(bytes, data)
 	fmt.Println(data)
 }
