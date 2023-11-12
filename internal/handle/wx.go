@@ -3,13 +3,15 @@ package handle
 import (
 	"crypto/sha1"
 	"encoding/hex"
-	"encoding/json"
+	"encoding/xml"
 	"fmt"
 	"io"
 	"log"
 	"sort"
 
 	"github.com/gin-gonic/gin"
+
+	"WxGPT/internal/model"
 )
 
 func Wx(ctx *gin.Context) {
@@ -32,8 +34,8 @@ func Wx(ctx *gin.Context) {
 		if err != nil {
 			log.Println(err)
 		}
-		data := make(map[string]any)
-		err = json.Unmarshal(bytes, &data)
+		var data model.ReceiveMsg
+		err = xml.Unmarshal(bytes, &data)
 		if err != nil {
 			log.Println(err)
 		}
