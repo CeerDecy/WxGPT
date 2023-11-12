@@ -3,11 +3,12 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 
-	"WxGPT/handle"
+	"WxGPT/internal/handle"
 )
 
 func Engine() *gin.Engine {
 	router := gin.Default()
-	router.Any("/wx", handle.Wx)
+	router.GET("/wx", handle.Auth)
+	router.POST("/wx", handle.ReceiveAndReturn)
 	return router
 }

@@ -1,15 +1,14 @@
-package handle
+package tools
 
 import (
 	"crypto/sha1"
 	"encoding/hex"
 	"fmt"
 	"sort"
-	"testing"
 )
 
-func TestSha(t *testing.T) {
-	list := []any{"token", "timestamp", "nonce"}
+func Auth(signature string, timestamp string, nonce string, token string) bool {
+	list := []any{token, timestamp, nonce}
 	sort.Slice(list, func(i, j int) bool {
 		s1 := list[i].(string)
 		s2 := list[j].(string)
@@ -17,5 +16,6 @@ func TestSha(t *testing.T) {
 	})
 	hash := sha1.New()
 	hash.Write([]byte(fmt.Sprint(list...)))
-	fmt.Println(hex.EncodeToString(hash.Sum(nil)))
+	encodeToString := hex.EncodeToString(hash.Sum(nil))
+	return encodeToString == signature
 }
