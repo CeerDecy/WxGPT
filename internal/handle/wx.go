@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"WxGPT/internal/gpt/gptclient"
 	"WxGPT/internal/model"
 	"WxGPT/internal/tools"
 )
@@ -30,10 +31,19 @@ func ReceiveAndReturn(ctx *gin.Context) {
 	//		data.ToUserName,
 	//		uint64(time.Now().Unix()),
 	//"receive msg :" + data.Content)))
-	ctx.Data(
-		200,
-		"application/xml",
-		[]byte(model.DefaultTextResp(data.FromUserName, data.ToUserName, "receive msg :"+data.Content)))
+	client := gptclient.DefaultClient()
+	response, err := client.GetResponse(data.Content)
+	if err != nil {
+		ctx.Data(
+			200,
+			"application/xml",
+			[]byte(model.DefaultTextResp(data.FromUserName, data.ToUserName, err.Error())))
+	} else {
+		ctx.Data(
+			200,
+			"application/xml",
+			[]byte(model.DefaultTextResp(data.FromUserName, data.ToUserName, response)))
+	}
 
 }
 
