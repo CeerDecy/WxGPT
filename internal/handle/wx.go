@@ -53,7 +53,7 @@ func ReceiveAndReturn(ctx *gin.Context) {
 		[]byte(model.DefaultTextResp(
 			data.FromUserName,
 			data.ToUserName,
-			fmt.Sprintf("由于GPT响应时间可能会比较长，【获取结果】请过一段时间后访问此链接：\nhttp://101.43.101.59/stream?sid=%s\n若想【实时查看】结果，可以将链接复制到edge或chrome浏览器中，【实时查看】暂不支持其他浏览器", sid))))
+			fmt.Sprintf("由于GPT响应时间可能会比较长，【获取结果】请过一段时间后访问此链接：\nhttp://101.43.101.59/stream?sid=%s\n若想【实时查看】结果，可以将链接复制到【PC端】edge或chrome浏览器中，【实时查看】暂不支持手机浏览器", sid))))
 
 }
 
