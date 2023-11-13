@@ -45,6 +45,7 @@ func (s *Session) ReadStream() {
 		for {
 			recv, err := s.stream.Recv()
 			if err != nil {
+				s.stream.Close()
 				s.Sign <- struct{}{}
 				return
 			}
