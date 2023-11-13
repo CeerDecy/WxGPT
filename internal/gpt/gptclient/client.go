@@ -2,7 +2,6 @@ package gptclient
 
 import (
 	"context"
-	"log"
 	"time"
 
 	"github.com/sashabaranov/go-openai"
@@ -25,7 +24,7 @@ func DefaultClient() *GptClient {
 	}
 }
 
-func (g *GptClient) GetStreamResponse(content string) (openai.ChatCompletionStreamResponse, error) {
+func (g *GptClient) GetStreamResponse(content string) (*openai.ChatCompletionStream, error) {
 	msgs := message.NewMessages()
 	msgs.AddChatMessageRoleUserMsg(content)
 	stream, err := g.c.CreateChatCompletionStream(context.Background(),
@@ -34,13 +33,7 @@ func (g *GptClient) GetStreamResponse(content string) (openai.ChatCompletionStre
 			Messages: msgs.Msg,
 			Stream:   true,
 		})
-	if err != nil {
-		log.Println(err)
-	}
-	response, err := stream.Recv()
-	//response.Object
-	//io.ReadAll()
-	return response, err
+	return stream, err
 }
 
 func (g *GptClient) GetResponse(content string) (string, error) {

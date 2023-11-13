@@ -2,6 +2,7 @@ package handle
 
 import (
 	"encoding/xml"
+	"fmt"
 	"io"
 	"log"
 
@@ -9,10 +10,12 @@ import (
 
 	"WxGPT/internal/gpt/gptclient"
 	"WxGPT/internal/model"
+	"WxGPT/internal/session"
 	"WxGPT/internal/tools"
 )
 
 func ReceiveAndReturn(ctx *gin.Context) {
+	signature, _ := ctx.GetQuery("signature")
 	bytes, err := io.ReadAll(ctx.Request.Body)
 	if err != nil {
 		log.Println(err)
@@ -23,17 +26,9 @@ func ReceiveAndReturn(ctx *gin.Context) {
 		log.Println(err)
 	}
 	log.Printf("[Unmarshal data ] : %+v", data)
-	//ctx.Data(
-	//	200,
-	//	"application/xml",
-	//	[]byte(fmt.Sprintf(`<xml><ToUserName><![CDATA[%s]]></ToUserName><FromUserName><![CDATA[%s]]></FromUserName><CreateTime>%d</CreateTime><MsgType><![CDATA[text]]></MsgType><Content><![CDATA[%s]]></Content></xml>`,
-	//		data.FromUserName,
-	//		data.ToUserName,
-	//		uint64(time.Now().Unix()),
-	//"receive msg :" + data.Content)))
 	client := gptclient.DefaultClient()
-	response, err := client.GetResponse(data.Content)
-
+	//response, err := client.GetResponse(data.Content)
+	stream, err := client.GetStreamResponse(data.Content)
 	if err != nil {
 		if err.Error() == `Post "https://proxy.geekai.co/v1/chat/completions": context deadline exceeded` {
 			ctx.Data(
@@ -46,12 +41,19 @@ func ReceiveAndReturn(ctx *gin.Context) {
 			200,
 			"application/xml",
 			[]byte(model.DefaultTextResp(data.FromUserName, data.ToUserName, err.Error())))
-	} else {
-		ctx.Data(
-			200,
-			"application/xml",
-			[]byte(model.DefaultTextResp(data.FromUserName, data.ToUserName, response)))
+		return
 	}
+	sid := tools.Md5([]byte(signature))
+	sess := session.NewSession(stream)
+	session.ChatSession.Set(sid, sess)
+	sess.ReadStream()
+	ctx.Data(
+		200,
+		"application/xml",
+		[]byte(model.DefaultTextResp(
+			data.FromUserName,
+			data.ToUserName,
+			fmt.Sprintf("由于GPT响应时间可能会比较长，获取结果请访问此链接 http://101.43.101.59/stream?sid=%s", sid))))
 
 }
 
