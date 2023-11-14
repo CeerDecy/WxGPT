@@ -47,8 +47,8 @@ func ReceiveAndReturn(ctx *gin.Context) {
 	sid := tools.Md5([]byte(signature))
 	sess := session.NewSession(stream)
 	session.ChatSession.Set(sid, sess)
-	sess.ReadStream()
-	time.Sleep(4500 * time.Millisecond)
+	go sess.ReadStream()
+	time.Sleep(4000 * time.Millisecond)
 	if sess.Done {
 		ctx.Data(
 			200,
