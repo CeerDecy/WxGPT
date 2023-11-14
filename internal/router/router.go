@@ -1,6 +1,8 @@
 package router
 
 import (
+	"time"
+
 	"github.com/gin-gonic/gin"
 
 	"WxGPT/internal/gpt/gptclient"
@@ -23,8 +25,13 @@ func Engine() *gin.Engine {
 		}
 		sess := session.NewSession(stream)
 		session.ChatSession.Set("1", sess)
-		sess.ReadStream()
-		ctx.String(200, "http://localhost:80/stream?sid=1")
+		go sess.ReadStream()
+		time.Sleep(4000 * time.Millisecond)
+		if sess.Done {
+			ctx.String(200, string(sess.Content))
+		} else {
+			ctx.String(200, "http://localhost:80/stream?sid=1")
+		}
 	})
 	return router
 }

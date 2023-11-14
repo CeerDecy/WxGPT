@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -46,7 +47,19 @@ func ReceiveAndReturn(ctx *gin.Context) {
 	sid := tools.Md5([]byte(signature))
 	sess := session.NewSession(stream)
 	session.ChatSession.Set(sid, sess)
-	sess.ReadStream()
+	go sess.ReadStream()
+	time.Sleep(4000 * time.Millisecond)
+	if sess.Done {
+		ctx.Data(
+			200,
+			"application/xml",
+			[]byte(model.DefaultTextResp(
+				data.FromUserName,
+				data.ToUserName,
+				string(sess.Content),
+			)))
+		return
+	}
 	ctx.Data(
 		200,
 		"application/xml",

@@ -16,18 +16,22 @@ func init() {
 }
 
 type Session struct {
-	stream *openai.ChatCompletionStream
-	buf    []byte
-	Sign   chan struct{}
-	Lock   sync.Mutex
+	stream  *openai.ChatCompletionStream
+	buf     []byte
+	Content []byte
+	Done    bool
+	Sign    chan struct{}
+	Lock    sync.Mutex
 }
 
 func NewSession(stream *openai.ChatCompletionStream) *Session {
 	return &Session{
-		stream: stream,
-		buf:    make([]byte, 0),
-		Sign:   make(chan struct{}),
-		Lock:   sync.Mutex{},
+		stream:  stream,
+		buf:     make([]byte, 0),
+		Content: make([]byte, 0),
+		Done:    false,
+		Sign:    make(chan struct{}, 1),
+		Lock:    sync.Mutex{},
 	}
 }
 
@@ -46,12 +50,14 @@ func (s *Session) ReadStream() {
 			recv, err := s.stream.Recv()
 			if err != nil {
 				s.stream.Close()
+				s.Done = true
 				s.Sign <- struct{}{}
 				return
 			}
 			for _, v := range recv.Choices {
 				s.Lock.Lock()
 				s.buf = append(s.buf, v.Delta.Content...)
+				s.Content = append(s.Content, v.Delta.Content...)
 				log.Printf("%s", string(s.buf))
 				s.Lock.Unlock()
 			}
