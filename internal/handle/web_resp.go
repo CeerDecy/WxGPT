@@ -17,16 +17,20 @@ func StreamWeb(ctx *gin.Context) {
 	}
 	//fmt.Println(streamRaw)
 	sess := streamRaw.(*session.Session)
-	ctx.Writer.Header().Set("Content-Type", "text/event-stream;charset=utf-8")
-	ctx.Stream(func(w io.Writer) bool {
-		res := sess.ReadResp()
-		_, err := w.Write(res)
-		select {
-		case <-sess.Sign:
-			return false
-		default:
-			return err == nil
-		}
-	})
+	if sess.Done {
+		ctx.String(200, string(sess.Content))
+	} else {
+		ctx.Writer.Header().Set("Content-Type", "text/event-stream;charset=utf-8")
+		ctx.Stream(func(w io.Writer) bool {
+			res := sess.ReadResp()
+			_, err := w.Write(res)
+			select {
+			case <-sess.Sign:
+				return false
+			default:
+				return err == nil
+			}
+		})
+	}
 
 }
