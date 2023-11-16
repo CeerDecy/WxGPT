@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"WxGPT/internal/gpt/gptclient"
+	"WxGPT/internal/gpt/message"
 	"WxGPT/internal/handle"
 	"WxGPT/internal/session"
 )
@@ -18,7 +19,9 @@ func Engine() *gin.Engine {
 	router.GET("/ask", func(ctx *gin.Context) {
 		query, _ := ctx.GetQuery("q")
 		client := gptclient.DefaultClient()
-		stream, err := client.GetStreamResponse(query)
+		messages := message.NewMessages()
+		messages.AddChatMessageRoleUserMsg(query)
+		stream, err := client.GetStreamResponse(messages)
 		if err != nil {
 			ctx.String(200, err.Error())
 			return

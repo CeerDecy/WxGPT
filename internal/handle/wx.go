@@ -32,8 +32,9 @@ func ReceiveAndReturn(ctx *gin.Context) {
 	sid := tools.Md5([]byte(signature))
 	sessionRaw, ok := session.ChatSession.Get(sid)
 	var msgs *message.Messages
+	var sess *session.Session
 	if ok {
-		sess, _ := sessionRaw.(session.Session)
+		sess, _ = sessionRaw.(*session.Session)
 		msgs = sess.Msgs
 	} else {
 		msgs = message.NewMessages()
@@ -54,8 +55,10 @@ func ReceiveAndReturn(ctx *gin.Context) {
 			[]byte(model.DefaultTextResp(data.FromUserName, data.ToUserName, err.Error())))
 		return
 	}
-	sess := session.NewSession(stream)
-	session.ChatSession.Set(sid, sess)
+	if !ok {
+		sess = session.NewSession(stream)
+		session.ChatSession.Set(sid, sess)
+	}
 	go sess.ReadStream()
 	time.Sleep(4000 * time.Millisecond)
 	if sess.Done {

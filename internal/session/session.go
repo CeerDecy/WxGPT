@@ -35,6 +35,7 @@ func NewSession(stream *openai.ChatCompletionStream) *Session {
 		Done:    false,
 		Sign:    make(chan struct{}, 1),
 		Lock:    sync.Mutex{},
+		Msgs:    message.NewMessages(),
 	}
 }
 
