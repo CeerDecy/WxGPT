@@ -24,13 +24,11 @@ func DefaultClient() *GptClient {
 	}
 }
 
-func (g *GptClient) GetStreamResponse(content string) (*openai.ChatCompletionStream, error) {
-	msgs := message.NewMessages()
-	msgs.AddChatMessageRoleUserMsg(content)
+func (g *GptClient) GetStreamResponse(messages *message.Messages) (*openai.ChatCompletionStream, error) {
 	stream, err := g.c.CreateChatCompletionStream(context.Background(),
 		openai.ChatCompletionRequest{
 			Model:    openai.GPT3Dot5Turbo,
-			Messages: msgs.Msg,
+			Messages: messages.Msg,
 			Stream:   true,
 		})
 	return stream, err

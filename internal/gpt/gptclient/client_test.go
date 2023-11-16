@@ -6,6 +6,8 @@ import (
 	"reflect"
 	"sync"
 	"testing"
+
+	"WxGPT/internal/gpt/message"
 )
 
 func TestClient(t *testing.T) {
@@ -23,7 +25,9 @@ func TestClient(t *testing.T) {
 
 func TestStreamClient(t *testing.T) {
 	client := DefaultClient()
-	response, err := client.GetStreamResponse("怎么求导")
+	messages := message.NewMessages()
+	messages.AddChatMessageRoleUserMsg("hello")
+	response, err := client.GetStreamResponse(messages)
 	if err != nil {
 		log.Println(err)
 	}

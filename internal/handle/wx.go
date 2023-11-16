@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"WxGPT/internal/gpt/gptclient"
+	"WxGPT/internal/gpt/message"
 	"WxGPT/internal/model"
 	"WxGPT/internal/session"
 	"WxGPT/internal/tools"
@@ -28,8 +29,17 @@ func ReceiveAndReturn(ctx *gin.Context) {
 	}
 	log.Printf("[Unmarshal data ] : %+v", data)
 	client := gptclient.DefaultClient()
-	//response, err := client.GetResponse(data.Content)
-	stream, err := client.GetStreamResponse(data.Content)
+	sid := tools.Md5([]byte(signature))
+	sessionRaw, ok := session.ChatSession.Get(sid)
+	var msgs *message.Messages
+	if ok {
+		sess, _ := sessionRaw.(session.Session)
+		msgs = sess.Msgs
+	} else {
+		msgs = message.NewMessages()
+	}
+	msgs.AddChatMessageRoleUserMsg(data.Content)
+	stream, err := client.GetStreamResponse(msgs)
 	if err != nil {
 		if err.Error() == `Post "https://proxy.geekai.co/v1/chat/completions": context deadline exceeded` {
 			ctx.Data(
@@ -44,7 +54,6 @@ func ReceiveAndReturn(ctx *gin.Context) {
 			[]byte(model.DefaultTextResp(data.FromUserName, data.ToUserName, err.Error())))
 		return
 	}
-	sid := tools.Md5([]byte(signature))
 	sess := session.NewSession(stream)
 	session.ChatSession.Set(sid, sess)
 	go sess.ReadStream()

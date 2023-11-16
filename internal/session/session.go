@@ -7,6 +7,8 @@ import (
 	cmap "github.com/orcaman/concurrent-map"
 	"github.com/sashabaranov/go-openai"
 	_ "github.com/sashabaranov/go-openai"
+
+	"WxGPT/internal/gpt/message"
 )
 
 var ChatSession cmap.ConcurrentMap
@@ -22,6 +24,7 @@ type Session struct {
 	Done    bool
 	Sign    chan struct{}
 	Lock    sync.Mutex
+	Msgs    *message.Messages
 }
 
 func NewSession(stream *openai.ChatCompletionStream) *Session {
